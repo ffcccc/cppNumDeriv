@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include "Eigen/Core"
-#include "../eigenBeginEnd.h"
+#include "EigenIter/eigenBeginEnd.h"
 
 //using namespace Eigen;
 
@@ -153,17 +153,16 @@ int gradient(TFunc func,
 		std::replace_if(begin(side), end(side), [](double i) { return (i == NA); }, 1.0);
 
 		// eps<-rep(args$eps, n) * side
-		ValArr eps = side * epsilon;
-		ValArr dx = x + eps;
+		//ValArr eps = side * epsilon;
 
 		// #now case 2
 		double f1,f2;
 		func(x, f1);
 
 		// df <-rep(NA, n)  we use a[0,] instead
-		dx = x;
+		ValArr dx = x;
 		for(int i = 0; i < n; i++) { // in 1 : n)
-			dx[i] = x[i] + eps[i];
+			dx[i] = x[i] + side[i] * epsilon;	//eps[i];
 			func(dx, f2);
 			dx[i] = x[i];
 			
@@ -381,18 +380,21 @@ ValArr genD(TFunc func, const ValArr& x, const std::string& method, const TArgs&
 		Hdiag[i] = Haprox[0];
     }
 
+	h.setZero();
+	dx.setZero();
 	Daprox.setZero();
-    int u = n-1;
+    int u = n;
 
     for(int i=0; i<n; i++) { // 2nd derivative  - do lower half of hessian only
+		
 		for(int j=0; j<=i; j++) {
-			u = u + 1;
+
 			if(i == j) {
 				res[u] = Hdiag[i];
 			}
 			else {
-				ValArr h = h0;
-				ValArr dx = x;
+				h = h0;
+				dx = x;
 				double f1, f2;
 				for(int k = 0; k < r; k++) { // successively reduce h
 					dx[i] = x[i] + h[i];
@@ -417,6 +419,7 @@ ValArr genD(TFunc func, const ValArr& x, const std::string& method, const TArgs&
 				}
 				res[u] = Daprox[0];
 			}
+			u++;
 		}
     }
 
