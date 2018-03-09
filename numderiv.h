@@ -5,7 +5,7 @@
 #include <tuple>
 #include <algorithm>
 #include <functional>
-#include "Eigen/Core"
+#include "Eigen334/Core"
 #include "EigenIter/eigenBeginEnd.h"
 
 //using namespace Eigen;
@@ -14,7 +14,7 @@ typedef Eigen::ArrayXd ValArr;
 typedef Eigen::ArrayXXd ValMat;
 
 // helper: print error string & return errorcode
-int stop(const std::string& errmessage, int errcode = 0)
+inline int stop(const std::string& errmessage, int errcode = 0)
 {
     std::cerr << errmessage;
     return errcode;
@@ -63,11 +63,11 @@ public:
     {
 	return _dimX;
     };
-
     inline int DimY()
     {
 	return _dimY;
     };
+
     void SetDimX(int _dim)
     {
 	this->_dimX = _dim;
@@ -80,7 +80,7 @@ public:
 private:
 	// functor
     std::function<double(const ValArr&)> myfunc;
-	// domain, codomain dims
+	// domain & codomain dims
     int _dimX;
     int _dimY;
 };
@@ -109,7 +109,7 @@ private:
 //    modified by Paul Gilbert
 //    from original code by Xingqiao Liu
 
-int gradient(TFunc func,
+inline int gradient(TFunc func,
     const ValArr& x,
     ValArr& res,
     const std::string& method,
@@ -282,7 +282,7 @@ int gradient(TFunc func,
 		return stop("indicated method not supported.");
 }
 
-ValArr gradient(TFunc func,
+inline ValArr gradient(TFunc func,
     const ValArr& x,
     const std::string& method,
     const ValArr& side_par,
@@ -294,7 +294,7 @@ ValArr gradient(TFunc func,
 	return res;
 }
 
-ValArr genD(TFunc func, const ValArr& x, const std::string& method, const TArgs& method_args)
+inline ValArr genD(TFunc func, const ValArr& x, const std::string& method, const TArgs& method_args)
 {
 	//    C++ porting by Fabio Rosa				(Jan, 2018)
     //    additional cleanup by Paul Gilbert 	(March, 2006)
@@ -427,7 +427,7 @@ ValArr genD(TFunc func, const ValArr& x, const std::string& method, const TArgs&
 }
 
 
-int hessian(TFunc func,
+inline int hessian(TFunc func,
 			const ValArr& x,
 			ValMat &H,
 			const std::string& method,
@@ -460,8 +460,8 @@ int hessian(TFunc func,
     // H
     H.resize(nx, nx);
 	H.setZero();
-
-    ValArr D = genD(func, x, method, method_args);
+	TArgs Dargs = std::make_tuple(0.0001, 0.1, 1.781e-5, 4, 2, false);
+    ValArr D = genD(func, x, method, Dargs);
 
     // H <- diag(NA,length(x))
     int u = nx;
@@ -480,7 +480,7 @@ int hessian(TFunc func,
     return 1;
 }
 
-ValMat hessian(TFunc func,
+inline ValMat hessian(TFunc func,
     const ValArr& x,
     const std::string& method,
     const TArgs& method_args)
@@ -505,7 +505,7 @@ bool doTest(const T &res, const T &ref, double tol, const std::string &tname, bo
 	return testOK;
 }
 	
-bool testDeriv() {
+inline bool testDeriv() {
 	bool testSuite(true);
 	//bool testOK(true);
 	double My_PI(3.14159265358979323846);
