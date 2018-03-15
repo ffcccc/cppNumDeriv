@@ -5,6 +5,7 @@
 #include <tuple>
 #include <algorithm>
 #include <functional>
+#include <vector>
 #include "Eigen334/Core"
 #include "EigenIter/eigenBeginEnd.h"
 
@@ -183,7 +184,8 @@ inline int gradient(TFunc func,
 		// #where the indexing variables k for rows(1 to r), i for columns(1 to n),
 		// #r is the number of iterations, and n is the number of variables.
 		
-		std::vector<ValArr> y(r);
+		std::vector<ValArr> y;
+		y.resize(r);
 		for(int k = 0; k < r; k++) {
 			y[k].resize(n);
 			y[k].setZero(); // apply(clear);
