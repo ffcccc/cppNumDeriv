@@ -184,8 +184,8 @@ inline int gradient(TFunc func,
 		// #where the indexing variables k for rows(1 to r), i for columns(1 to n),
 		// #r is the number of iterations, and n is the number of variables.
 		
-		std::vector<ValArr> y;
-		y.resize(r);
+		std::vector<ValArr> y(r);
+		//y.resize(r);
 		for(int k = 0; k < r; k++) {
 			y[k].resize(n);
 			y[k].setZero(); // apply(clear);
@@ -264,17 +264,14 @@ inline int gradient(TFunc func,
 		// # 3 Return the final improved derivative vector.
 		// #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 		// -
-		int rmax = r - 2;
+		//int rmax = r - 2;
 		for(int m = 1; m <= r - 1; m++) {
-			for(int i = rmax; i >= 0; i--) {
-				double p4m = pow(4.0, m);
+			double p4m = pow(4.0, m);
+			for(int i = 0; i <= r-1-m; i++) {
 				y[i] = (y[i + 1] * p4m - y[i]) / (p4m - 1.0);
 				// a = (a [2:(r+1-m), , drop = FALSE] * (4 ^ m) - a [1:(r - m), , drop = FALSE]) / (4 ^ m - 1)
-
-				if(show_details) {
-				}
 			}
-			rmax--;
+			//rmax--;
 		}
 
 		res = y[0];
@@ -369,14 +366,14 @@ inline ValArr genD(TFunc func, const ValArr& x, const std::string& method, const
 			h /= v;                                        // Reduced h by 1/v.
 		}
 
-		int rmax = r - 2;
+		//int rmax = r - 2;
 		for(int m = 1; m <= r - 1; m++) {
-			for(int k = rmax; k >= 0; k--) {
-				double p4m = pow(4, m);
+			double p4m = pow(4, m);
+			for(int k = 0; k <= r - 1 - m; k++) {
 				Daprox[k] = (Daprox[k + 1] * p4m - Daprox[k]) / (p4m - 1);
 				Haprox[k] = (Haprox[k + 1] * p4m - Haprox[k]) / (p4m - 1);
 			}
-			rmax--;
+			//rmax--;
 		}
 		res[i] = Daprox[0];
 		Hdiag[i] = Haprox[0];
@@ -411,13 +408,13 @@ inline ValArr genD(TFunc func, const ValArr& x, const std::string& method, const
 					h /= v;                // Reduced h by 1/v.
 				}
 
-				int rmax = r - 2;
+				//int rmax = r - 2;
 				for(int m = 1; m <= r - 1; m++) {
-					for(int k = rmax; k >= 0; k--) {
-						double p4m = pow(4, m);
+					double p4m = pow(4, m);
+					for(int k = 0; k <= r-1-m; k++) {
 						Daprox[k] = (Daprox[k + 1] * p4m - Daprox[k]) / (p4m - 1);
 					}
-					rmax--;
+					//rmax--;
 				}
 				res[u] = Daprox[0];
 			}
