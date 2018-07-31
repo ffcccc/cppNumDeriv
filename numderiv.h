@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
-#include "eigen334/Core"
+#include "Eigen/Core"
 #include "eigenUtils/eigenBeginEnd.h"
 
 //using namespace Eigen;
