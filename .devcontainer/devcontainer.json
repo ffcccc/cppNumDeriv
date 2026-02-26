@@ -1,0 +1,6 @@
+{
+  "name": "cppNumDeriv",
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": "echo Eigen installed",
+  "workspaceFolder": "/workspaces/cppNumDeriv"
+}
